@@ -6,7 +6,7 @@ class Booking(models.Model):
     ID = models.AutoField(primary_key=True)
     Name = models.CharField(max_length=255)
     No_of_guests = models.IntegerField(6)
-    Booking_date = models.DateField(default=django.utils.timezone.now)
+    Booking_date = models.DateField() # default=django.utils.timezone.now
     
     class Meta:
         verbose_name = 'Booking'
