@@ -16,3 +16,4 @@ class MenuViewTest(TestCase):
         serializer = MenuSerializer(menus, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
+        

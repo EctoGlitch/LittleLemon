@@ -1,0 +1,215 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Little Lemon</title>
+    <meta name="description" content="A brief description" />
+    <meta
+      name="author"
+      content="Based in Chicago, Illinois, Little Lemon is a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist."
+    />
+
+    <!-- Load favicon -->
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="{% static 'img/favicon.ico' %}"
+    />
+
+    <!-- Include your CSS files here -->
+    <link
+      rel="preload"
+      as="style"
+      href="{% static 'css/style.css' %}"
+      onload="this.rel = 'stylesheet'"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Karla&family=Markazi+Text:wght@500&display=swap"
+      rel="stylesheet"
+    />
+
+  </head>
+<body>
+  {% block content %}
+<header>
+  <img src="{% static 'img/logo.png' %}" />
+    </header>
+    <nav>
+      <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Menu</a></li>
+        <li><a href="#">Book</a></li>
+      </ul>
+  </nav>
+  <h1>Book a table now</h1>
+  <!-- page grid -->
+  <div class="row">
+    <div class="column">
+      <form method="POST" id="booking_form">
+        {% csrf_token %}
+        <p>
+          <label for="name">Name:</label>
+          <input type="text" placeholder="Your Name" maxlength="200" required="" id="name">
+        </p>
+        <p>
+          <label for=no_of_guests>No. of guests:</label>
+          <input type="number" id="no_of_guests" min="1" max="6" value="1" required>
+        <p>
+          <label for="booking_date">Booking Date:</label>
+          <input type="date" id="booking_date">
+        </p>
+        <p>
+          <label for="time_slot">Booking time:</label>
+          <select id="time_slot" name="time_slot" required></select>
+        </p>
+
+        <button type="submit" id="submit">Reserve</button>
+      </form>
+    </div>
+    <div class="column">
+      <h2>Bookings For <span id="today"></span></h2>
+      <div id="bookings">
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <article>
+      <img src="{% static 'img/logo_footer.png' %}" />
+    </article>
+    <article>
+      <p>Copyright {{ current_year }} Little Lemon</p>
+    </article>
+  </footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const bookingsUrl = "{% url 'book' %}";
+        const form = document.getElementById('booking_form');
+        
+        if (!form) {
+            console.error('Booking form not found');
+            return;
+        }
+
+        function initializeDateInput() {
+            const dateInput = document.getElementById('booking_date');
+            if (!dateInput) return;
+            const today = new Date();
+            dateInput.value = today.toISOString().split('T')[0];
+            dateInput.addEventListener('change', getBookings);
+        }
+
+        function genTimeSlotOptions(takenSlots = []) {
+          const timeSlotSelect = document.getElementById('time_slot');
+          if (!timeSlotSelect) return;
+          timeSlotSelect.innerHTML = ''; // Clear existing options
+          for (let i = 10; i < 21; i++) {
+              const option = document.createElement('option');
+              option.value = i;
+              if (i < 12) {
+                  option.textContent = `${i}:00 AM`;
+              } else {
+                  const hour = i > 12 ? i - 12 : i;
+                  option.textContent = `${hour}:00 PM`;
+              }
+              if (takenSlots.includes(i)) {
+                  option.disabled = true;
+                  option.style.color = 'grey';
+              }
+              timeSlotSelect.appendChild(option);
+          }
+      }
+
+        function getBookings() {
+            const date = document.getElementById('booking_date')?.value;
+            const today = document.getElementById('today');
+            if (!date || !today) return;
+            
+            today.innerHTML = date;
+            
+            fetch(`${bookingsUrl}?date=${date}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+              console.log('data', data);
+                const bookings = document.getElementById('bookings');
+                if (!bookings) return;
+                bookings.innerHTML = '';
+                const timeSlotSelect = document.querySelectorAll('option[name="time_slot"]');
+                
+                const takenSlots = [];
+                data.forEach(booking => {
+                    bookings.innerHTML += `<p>${booking.fields['name']} - ${booking.fields['time_slot']}:00</p>`;
+                    takenSlots.push(booking.fields['time_slot']);
+                });
+                genTimeSlotOptions(takenSlots);
+              }).then(() => {
+                const bookings = document.getElementById('bookings');
+                if (!bookings) return;
+                if (bookings.innerHTML === '') {
+                    bookings.innerHTML = '<p>No bookings for this date</p>';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+              name: document.getElementById('name').value,
+              no_of_guests: parseInt(document.getElementById('no_of_guests').value),
+              booking_date: document.getElementById('booking_date').value,
+              time_slot: parseInt(document.getElementById('time_slot').value)
+          };
+          console.log("Form data being sent:", formData);
+          
+          fetch(bookingsUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            console.log('Status:', response.status);
+            return response.text().then(text => {
+                console.log('Raw response:', text);
+                return text ? JSON.parse(text) : {};
+            });
+        })
+        .then(data => {
+            console.log('Parsed response:', data);
+            if (data.id) {
+                getBookings();
+                form.reset();
+                initializeDateInput();
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+        // Initialize
+        initializeDateInput();
+        genTimeSlotOptions();
+        getBookings();
+    });
+</script>
+
+{% endblock %}
+</body>
+</html>
