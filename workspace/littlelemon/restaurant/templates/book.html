@@ -34,7 +34,6 @@
       href="https://fonts.googleapis.com/css2?family=Karla&family=Markazi+Text:wght@500&display=swap"
       rel="stylesheet"
     />
-
   </head>
 <body>
   {% block content %}
@@ -53,7 +52,7 @@
   <!-- page grid -->
   <div class="row">
     <div class="column">
-      <form method="POST" id="booking_form">
+      <form method="POST" id="booking_form" data-bookings-url="{% url 'book' %}">
         {% csrf_token %}
         <p>
           <label for="name">Name:</label>
@@ -61,7 +60,12 @@
         </p>
         <p>
           <label for=no_of_guests>No. of guests:</label>
-          <input type="number" id="no_of_guests" min="1" max="6" value="1" required>
+          <!--<input type="number" id="no_of_guests" min="1" max="6" value="1" required>-->
+          <select id="no_of_guests" name="no_of_guests" required>
+            {% for i in "123456"|make_list %}
+                <option value="{{ i }}" {% if i == "1" %}selected{% endif %}>{{ i }}</option>
+            {% endfor %}
+        </select>
         <p>
           <label for="booking_date">Booking Date:</label>
           <input type="date" id="booking_date">
@@ -71,7 +75,7 @@
           <select id="time_slot" name="time_slot" required></select>
         </p>
 
-        <button type="submit" id="submit">Reserve</button>
+        <button type="submit" id="submit">Book</button>
       </form>
     </div>
     <div class="column">
@@ -89,127 +93,7 @@
       <p>Copyright {{ current_year }} Little Lemon</p>
     </article>
   </footer>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const bookingsUrl = "{% url 'book' %}";
-        const form = document.getElementById('booking_form');
-        
-        if (!form) {
-            console.error('Booking form not found');
-            return;
-        }
-
-        function initializeDateInput() {
-            const dateInput = document.getElementById('booking_date');
-            if (!dateInput) return;
-            const today = new Date();
-            dateInput.value = today.toISOString().split('T')[0];
-            dateInput.addEventListener('change', getBookings);
-        }
-
-        function genTimeSlotOptions(takenSlots = []) {
-          const timeSlotSelect = document.getElementById('time_slot');
-          if (!timeSlotSelect) return;
-          timeSlotSelect.innerHTML = ''; // Clear existing options
-          for (let i = 10; i < 21; i++) {
-              const option = document.createElement('option');
-              option.value = i;
-              if (i < 12) {
-                  option.textContent = `${i}:00 AM`;
-              } else {
-                  const hour = i > 12 ? i - 12 : i;
-                  option.textContent = `${hour}:00 PM`;
-              }
-              if (takenSlots.includes(i)) {
-                  option.disabled = true;
-                  option.style.color = 'grey';
-              }
-              timeSlotSelect.appendChild(option);
-          }
-      }
-
-        function getBookings() {
-            const date = document.getElementById('booking_date')?.value;
-            const today = document.getElementById('today');
-            if (!date || !today) return;
-            
-            today.innerHTML = date;
-            
-            fetch(`${bookingsUrl}?date=${date}`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-              console.log('data', data);
-                const bookings = document.getElementById('bookings');
-                if (!bookings) return;
-                bookings.innerHTML = '';
-                const timeSlotSelect = document.querySelectorAll('option[name="time_slot"]');
-                
-                const takenSlots = [];
-                data.forEach(booking => {
-                    bookings.innerHTML += `<p>${booking.fields['name']} - ${booking.fields['time_slot']}:00</p>`;
-                    takenSlots.push(booking.fields['time_slot']);
-                });
-                genTimeSlotOptions(takenSlots);
-              }).then(() => {
-                const bookings = document.getElementById('bookings');
-                if (!bookings) return;
-                if (bookings.innerHTML === '') {
-                    bookings.innerHTML = '<p>No bookings for this date</p>';
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        }
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = {
-              name: document.getElementById('name').value,
-              no_of_guests: parseInt(document.getElementById('no_of_guests').value),
-              booking_date: document.getElementById('booking_date').value,
-              time_slot: parseInt(document.getElementById('time_slot').value)
-          };
-          console.log("Form data being sent:", formData);
-          
-          fetch(bookingsUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response => {
-            console.log('Status:', response.status);
-            return response.text().then(text => {
-                console.log('Raw response:', text);
-                return text ? JSON.parse(text) : {};
-            });
-        })
-        .then(data => {
-            console.log('Parsed response:', data);
-            if (data.id) {
-                getBookings();
-                form.reset();
-                initializeDateInput();
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    });
-
-        // Initialize
-        initializeDateInput();
-        genTimeSlotOptions();
-        getBookings();
-    });
-</script>
-
+  <script src="{% static 'js/booking.js' %}"></script>
 {% endblock %}
 </body>
 </html>

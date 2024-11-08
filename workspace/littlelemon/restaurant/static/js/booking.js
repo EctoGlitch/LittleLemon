@@ -1,95 +1,125 @@
-console.log('booking.js loaded')
+document.addEventListener('DOMContentLoaded', function() {
+  
+  const form = document.getElementById('booking_form');
+  
+  if (!form) {
+      console.error('Booking form not found');
+      return;
+  }
 
-const date = new Date()
-  document.getElementById('reservation_date').value = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate().toString().padStart(2, "0")}`
-
-  getBookings()
 
 
+  function initializeDateInput() {
+      const dateInput = document.getElementById('booking_date');
+      if (!dateInput) return;
+      const today = new Date();
+      dateInput.value = today.toISOString().split('T')[0];
+      dateInput.addEventListener('change', getBookings);
+  }
 
-  document.getElementById('reservation_date').addEventListener('change', function (e) {
-    getBookings()
-  })
+  function genTimeSlotOptions(takenSlots = []) {
+    const timeSlotSelect = document.getElementById('time_slot');
+    if (!timeSlotSelect) return;
+    timeSlotSelect.innerHTML = ''; // Clear existing options
+    for (let i = 10; i < 21; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        if (i < 12) {
+            option.textContent = `${i}:00 AM`;
+        } else {
+            const hour = i > 12 ? i - 12 : i;
+            option.textContent = `${hour}:00 PM`;
+        }
+        if (takenSlots.includes(i)) {
+            option.disabled = true;
+            option.style.color = 'grey';
+        }
+        timeSlotSelect.appendChild(option);
+    }
+}
 
   function getBookings() {
-    let reserved_slots = []
-    const date = document.getElementById('reservation_date').value
-    document.getElementById('today').innerHTML = date
-  
-  
-    fetch(bookingsUrl + '?date=' + date)
-    .then(response => {
-        // Log full response details
-        console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
-        
-        return response.text().then(text => {
-            console.log('Raw response body:', text);
-            
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                console.error('JSON parse error:', e);
-                console.error('Response was:', text);
-                throw new Error('Invalid JSON response');
-            }
-        });
-    })
-      .then(data => {
-        reserved_slots = []
-        bookings = ''
-        
-        
-        for(let item of data){
-          if (item.fields && item.fields.reservation_slot !== undefined) {
-            const slot = Number(item.fields.reservation_slot)
-            reserved_slots.push(slot)  
-            bookings += `<p>${item.fields.first_name} - ${formatTime(slot)}</p>`
-          } else {
-            console.error('item.fields.reservation_slot is undefined for item:', item)
+      const date = document.getElementById('booking_date')?.value;
+      const today = document.getElementById('today');
+      if (!date || !today) return;
+      
+      today.innerHTML = date;
+      
+      fetch(`${bookingsUrl}?date=${date}`, {
+          headers: {
+              'Accept': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest'
           }
-        }
-        
-  
-        /* Step 12: Part four */
-        slot_options = '<option value="0" disabled>Select time</option>'
-        for (let i = 10; i < 20; i++){
-          const label = formatTime(i)
-          if (reserved_slots.includes(i)) {
-            slot_options += `<option value="${i}" disabled>${label}</option>`
-          } else {
-            slot_options += `<option value="${i}">${label}</option>`
-          }
-        }
-        
-  
-        document.getElementById('reservation_slot').innerHTML = slot_options
-        if(bookings == ''){
-          document.getElementById('bookings').innerHTML = '<p>No Booking</p>'
-        } else {
-          document.getElementById('bookings').innerHTML = bookings
-        }
       })
+      .then(response => response.json())
+      .then(data => {
+        console.log('data', data);
+          const bookings = document.getElementById('bookings');
+          if (!bookings) return;
+          bookings.innerHTML = '';
+          const timeSlotSelect = document.querySelectorAll('option[name="time_slot"]');
+          
+          const takenSlots = [];
+          data.sort((a, b) => a.fields['time_slot'] - b.fields['time_slot'])
+          .forEach(booking => {
+              bookings.innerHTML += `<p>${booking.fields['name']} - ${booking.fields['time_slot']}:00</p>`;
+              takenSlots.push(booking.fields['time_slot']);
+          });
+          genTimeSlotOptions(takenSlots);
+        }).then(() => {
+          const bookings = document.getElementById('bookings');
+          if (!bookings) return;
+          if (bookings.innerHTML === '') {
+              bookings.innerHTML = '<p>No bookings for this date</p>';
+          }
+      })
+      .catch(error => console.error('Error:', error));
   }
 
-  function formatTime(time) {
-    const ampm = time < 12 ? 'AM' : 'PM'
-    const t = time < 12 ? time : time > 12 ? time - 12 : time
-    const label = `${t} ${ampm}`
-    return label
-  }
+  const bookingsUrl = form.dataset.bookingsUrl;
 
+  form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = {
+        name: document.getElementById('name').value,
+        no_of_guests: parseInt(document.getElementById('no_of_guests').value),
+        booking_date: document.getElementById('booking_date').value,
+        time_slot: parseInt(document.getElementById('time_slot').value)
+    };
+    console.log("Form data being sent:", formData);
 
-  document.getElementById('button').addEventListener('click', function (e) {
-    const formdata = {
-      first_name: document.getElementById('first_name').value,
-      reservation_date: document.getElementById('reservation_date').value,
-      reservation_slot: document.getElementById('reservation_slot').value,
-    }
-
-    fetch("{% url 'bookings' %}", { method: 'post', body: JSON.stringify(formdata) })
-      .then(r => r.text())
-      .then(data => {
-        getBookings()
-      })
+    
+    
+    fetch(bookingsUrl, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      },
+      body: JSON.stringify(formData)
   })
+  .then(response => {
+      console.log('Status:', response.status);
+      return response.text().then(text => {
+          console.log('Raw response:', text);
+          return text ? JSON.parse(text) : {};
+      });
+  })
+  .then(data => {
+      console.log('Parsed response:', data);
+      if (data.id) {
+          getBookings();
+          form.reset();
+          initializeDateInput();
+      }
+  })
+  .catch(error => console.error('Error:', error));
+});
+
+  // Initialize
+  initializeDateInput();
+  genTimeSlotOptions();
+  getBookings();
+});
