@@ -11,11 +11,25 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# URL to use when referring to static files located in STATIC_ROOT
+STATIC_URL = '/restaurant/static/'
+
+# The absolute path to the directory where collectstatic will collect static files for deployment
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Additional locations the staticfiles app will traverse if the FileSystemFinder finder is enabled
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'restaurant/static'),
+]
+
+# Ensure the directory exists
+os.makedirs(STATIC_ROOT, exist_ok=True)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/

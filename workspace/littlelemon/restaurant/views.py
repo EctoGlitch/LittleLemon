@@ -23,6 +23,9 @@ def print_test():
 class HomeView(TemplateView):
     template_name = 'home.html'
 
+class AboutView(TemplateView):
+    template_name = 'about.html'
+
 @method_decorator(csrf_exempt, name='dispatch')
 @parser_classes([JSONParser])
 class BookView(generics.ListCreateAPIView):

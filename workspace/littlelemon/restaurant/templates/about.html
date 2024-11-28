@@ -1,0 +1,134 @@
+{% load static %}
+<html>
+   <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Little Lemon</title>
+    <meta name="description" content="A brief description" />
+    <meta
+      name="author"
+      content="Based in Chicago, Illinois, Little Lemon is a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist."
+    />
+
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="{% static 'img/favicon.ico' %}"
+    />
+
+    <!-- Include your CSS files here -->
+    <link
+      rel="preload"
+      as="style"
+      href="{% static 'css/style.css' %}"
+      onload="this.rel = 'stylesheet'"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Karla&family=Markazi+Text:wght@500&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script> 
+
+    
+  </head>
+
+   <body>
+    <header>
+      <img 
+        id='logo' 
+        alt='Little Lemon logo'
+        
+        srcset=" {% static 'img/logo.png' %} 1x, {% static 'img/logo_mob.png' %} 2x"
+        sizes="(max-width: 500px) 76px"
+        src="{% static 'img/logo_mob.png' %}" 
+      />
+      <div class="burgwrapper">
+        <button id="burger">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </button>
+      </div>
+      <nav id="nav-menu">
+        <ul>
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="{% url 'about' %}">About</a></li>
+          <li><a href="#">Menu</a></li>
+          <li><a href="#">Book</a></li>
+        </ul>
+      </nav>
+    </header>
+      <main class="about">
+        <h1 class="welcome">Wecome to Little Lemon</h1>
+         <section>
+            <article>
+              <p>Nestled in the heart of the Chicago Loop, Little Lemon brings the fresh flavors of the Mediterranean to the bustling epicenter of the Windy City. Family-owned and born from a dream to give Chicagoans a flavor of the sun-kissed Mediterranean coast, upon entering Little Lemon, you are on a food journey through every well-crafted dish telling a story of tradition, passion, and great taste.</p>
+              <p>Our menu is an interesting tapestry, rich with the widely varied culinary influences from around the Mediterranean region. From the warm and fragrant spices of North Africa to the fresh and zesty elements of the Greek Isles, each dish is lovingly crafted. Our chefs use only the freshest ingredients, locally sourced and from trusted Mediterranean suppliers, to ensure authenticity and quality in every bite.</p>
+              <p>At Little Lemon, we don't think of dining as just a meal; rather, it's an experience. The warm setting, with its rustic décor and Mediterranean hues, forms the perfect backdrop to any memorable meal you might have. Whether you are dining on a leisurely lunch with colleagues, a romantic dinner for two, or a festive celebration with the family, our staff is here to provide you with superlative service and hospitality.</p>
+              <p>Join us at Little Lemon and enjoy the taste of the Mediterranean in the heart of the Chicago Loop. We invite you to explore our diverse menu, discover new favorites, and create cherished memories with every visit. Welcome to your Mediterranean oasis-your table is waiting.</p>
+            </article>
+         </section>
+      </main>
+      <div id="map"></div>
+        
+          
+      <footer>
+        <article>
+          <h1 class="yellowfoot">Hours:</h1>
+          <ul>
+            <li>Mon - Fri: 2pm - 10pm</li>
+            <li>Sat: 2pm - 11pm</li>
+            <li>Sun: 2pm - 9pm</li>
+            <li>Except for public holidays.</li>
+          </ul>
+          <p>
+            
+          </p>
+        </article>
+
+        <article>
+          <h1 class="yellowfoot">Find us at:</h1>
+          <address>
+            123 Main Street<br />
+            Chicago, IL 60601
+          </address>
+        </article>
+        <article>
+          <h1 class="yellowfoot">Call us at:</h1>
+          <p>+1 (312)-555-1234</p>
+        </article>
+        <article>
+          <h1 class="yellowfoot">Follow us:</h1>
+          <ul class="soci">
+            <li>
+              <a href="https://www.twitter.com" target="_blank"><img src="{% static 'img/twitter.png' %}" /></a>
+            </li>
+            <li>
+              <a href="https://www.instagram.com" target="_blank"><img src="{% static 'img/instagram.png' %}" /></a>
+            </li>
+            <li>
+              <a href="https://www.tiktok.com" target="_blank"><img src="{% static 'img/tiktok.png' %}" /></a>
+            </li>
+            <li>
+              <a href="https://www.facebook.com" target="_blank"><img src="{% static 'img/facebook.png' %}"></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="copy">
+          <img src="{% static 'img/logo_footer.png' %}" />
+          <p class="yellowfoot">Copyright ©{{ current_year }} Little Lemon</p>
+        </article>
+      </footer>
+      <script src="{% static 'js/nav.js' %}"></script>
+      <script src="{% static 'js/map.js' %}"></script>
+    </body>
+</html>
