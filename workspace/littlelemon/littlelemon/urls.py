@@ -18,9 +18,10 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from restaurant import views
-from restaurant.views import HomeView
+from restaurant.views import HomeView, logoutView
 from rest_framework.authtoken.views import obtain_auth_token
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 # routers
@@ -29,16 +30,23 @@ router.register(r'tables', views.BookingViewSet)
 
 
 urlpatterns = [
+    # Base paths
     path('',  HomeView.as_view(), name='home'),
     path('admin/', admin.site.urls),
+    path('api/', include('restaurant.urls')),
+    
+    # Restaurant paths
+    path('restaurant/', include('restaurant.urls')),
+    path('restaurant/booking/', include(router.urls)),
+    
+    # Authentication paths
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
     path('api-token-auth/', obtain_auth_token),
-    path('api/', include('restaurant.urls')),
     
+    path('login/', views.login_view.as_view(), name='login'),
+    path('signup/', views.signup_view.as_view(), name='signup'),
+    path('logout/', logoutView, name='logout'),
     
-    path('restaurant/', include('restaurant.urls')),
-    path('restaurant/menu/', include('restaurant.urls')),
-    path('restaurant/booking/', include(router.urls)),
-    
-]
+  #force static files to be served no mater what
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

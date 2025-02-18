@@ -5,6 +5,15 @@ from rest_framework import serializers
 from .models import Menu, Booking
 from django.contrib.auth.models import User
 
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+    
+class SignupSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    email = serializers.EmailField()
+    password = serializers.CharField()
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -14,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
 class MenuSerializer(serializers.ModelSerializer):
     class Meta:
         model = Menu
-        fields = ['title', 'price', 'inventory']
+        fields = ['title', 'price', 'inventory', 'category_fk']
         
 class BookingSerializer(serializers.ModelSerializer):
     class Meta:

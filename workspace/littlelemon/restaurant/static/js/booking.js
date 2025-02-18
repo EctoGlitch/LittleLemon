@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
       dateInput.addEventListener('change', getBookings);
   }
 
+  // Initialize time slots based on taken slots
   function genTimeSlotOptions(takenSlots = []) {
     const timeSlotSelect = document.getElementById('time_slot');
     if (!timeSlotSelect) return;
@@ -37,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
         timeSlotSelect.appendChild(option);
     }
 }
-
+    // Initialize the date input and get initial bookings via fetch API
   function getBookings() {
       const date = document.getElementById('booking_date')?.value;
       const today = document.getElementById('today');
@@ -78,6 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const bookingsUrl = form.dataset.bookingsUrl;
 
+  // Add event listener to the form to handle form submission
   form.addEventListener('submit', function(e) {
       e.preventDefault();
       

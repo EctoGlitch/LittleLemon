@@ -1,0 +1,62 @@
+footer {
+    color: white;
+    background-color: #0F4030;
+    padding: 4rem;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.copy {
+    display: flex;
+    flex-direction: column;
+    margin-top: 4rem;
+}
+
+.copy img {
+    align-self: flex-end;
+    width: 75px;
+    height: auto;
+}
+
+.copy p, .copy img {
+    align-content: flex-end;
+    text-align: right;
+}
+
+
+footer p {
+    padding-top: 1rem;
+}
+
+.yellowfoot {
+    color: #DDCE00;
+}
+h1.yellowfoot {
+    font-size: 36pt;
+}
+.soci {
+    display: flex;
+    gap: 0.75rem;
+}
+.soci li a img {
+    cursor: pointer;
+    width: 50px;
+    height: auto;
+}
+
+
+@media (max-width: 500px) {
+    footer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    footer > * {
+        margin: 1rem;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+

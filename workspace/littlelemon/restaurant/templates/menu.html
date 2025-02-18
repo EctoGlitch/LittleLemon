@@ -1,0 +1,106 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Little Lemon</title>
+    <meta name="description" content="A brief description" />
+    <meta
+      name="author"
+      content="Based in Chicago, Illinois, Little Lemon is a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist."
+    />
+
+    <!-- Load favicon -->
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="{% static 'img/favicon.ico' %}"
+    />
+
+    <!-- Include your CSS files here -->
+    <link
+      rel="preload"
+      as="style"
+      href="{% static 'css/header.css' %}"
+      onload="this.rel = 'stylesheet'"
+    >
+
+    <link
+      rel="preload"
+      as="style"
+      href="{% static 'css/footer.css' %}"
+      onload="this.rel = 'stylesheet'"
+    >
+
+    <link
+      rel="preload"
+      as="style"
+      href="{% static 'css/style.css' %}"
+      onload="this.rel = 'stylesheet'"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Karla&family=Markazi+Text:wght@500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+<body>
+{% block content %}
+
+{% include 'header.html' %}
+  <main class="menu">
+    <div class="menubanner">
+      <div class="menubanner_text">
+        <h4>$8</h4>
+        <h4>PIZZA<br>DEAL</h4>
+        <h4>MEMBERS<br>EXCLUSIVE DEAL</h4>
+        <h4>EVERY MONDAY AND FRIDAY<br>FROM 3 PM - 6 PM</h4>
+      </div>
+      <img id="pizza_img" src="{% static 'img/menu/arugula-pizza.jpg' %}" alt="Arugula Pizza" />
+    </div>
+      <div id="menu_nav">
+        <div class="blur-overlay"></div>
+        <ul id="link">
+          <li><a class="menu_item_links target" data-category="All" href="#all">All</a></li>
+          <li><a class="menu_item_links" data-category="Main" href="#main">Main</a></li>
+          <li><a class="menu_item_links" data-category="Side" href="#sides">Sides</a></li>
+          <li><a class="menu_item_links" data-category="Dessert" href="#desserts">Desserts</a></li>
+          <li><a class="menu_item_links" data-category="Alcoholic" href="#alcoholic_drinks">Alcoholic Drinks</a></li>
+          <li><a class="menu_item_links" data-category="Non Alcoholic" href="#non_alcoholic_drinks">Non-Alcoholic Drinks</a></li>
+        </ul>
+      </div>
+    <div id="menu_items">
+        {% for item in menu_items %}
+        <div class="menu-item  {{item.slug}}" data-category="{{ item.category_fk }}">
+            <img class="menu_img {{item.slug}}"
+            src="{% static 'img/menu/'|add:item.slug|add:'.jpg' %}" 
+            onerror="this.src='{% static 'img/menu/no_image.png' %}'"
+            alt="{{ item.slug }}"/>
+            <h2>{{ item.title }}</h2>
+            <p>${{ item.price|floatformat:2 }}</p>
+            <p>Stock: {{ item.inventory }}</p>
+        </div>
+        {% empty %}
+        <p>No menu items available.</p>
+        {% endfor %} 
+    </div>
+  </main>
+
+  {% include 'footer.html' %}
+  
+  <script src="{% static 'js/nav.js' %}"></script>
+  <script src="{% static 'js/menu_nav.js' %}"></script>
+  <script>
+    
+  
+    </script>
+    
+
+{% endblock %}
+</body>
+</html>

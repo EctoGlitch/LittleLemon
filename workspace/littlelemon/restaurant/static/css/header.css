@@ -1,0 +1,403 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1 {
+    color:#0f4030;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    height: 6.063rem;
+    background-color: #fafaf6;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    z-index: 3000;
+}
+
+
+.lemon {
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.lemon > * {
+    margin: 1rem;
+}
+
+.lemon img {
+    height: auto;
+    width: 2.5rem;
+}
+
+.rest-name {
+    font-size: 4rem;
+    /* color: #EDEFEE; */
+}
+
+header div img {
+    margin: 0%;
+}
+
+
+nav {
+    background-color: #fafaf6;
+    margin-bottom: 0px;
+}
+
+nav ul {
+    list-style: none;
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-align: center;
+    padding-inline-start: 0rem;
+    margin-bottom: 0px;
+    align-items: center;
+}
+
+nav ul li {
+    display: inline-block;
+    margin: 0.5rem;
+}
+
+nav ul a {
+    color: #0f4030;
+    text-decoration: none;
+    display: inline-block;
+    width: 100px;
+    padding: 1rem;
+}
+
+nav ul a:active {
+    text-decoration: none;
+}
+
+nav ul a:hover {
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#user_img {
+    margin-right: 0.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+nav ul li a {
+    align-items: center;
+}
+
+/* user */
+nav ul li:nth-child(6) a{
+    display: flex;
+    flex-direction: row;
+    width: 18rem;
+    height: 1.5rem;
+    align-items: center;
+}
+
+/* book */
+nav ul li:nth-child(5) a {
+    border: #0f4030 1px solid;
+    width: 12rem;
+    border-radius: 10px;
+    padding: 0;
+    padding: 0.5rem;
+}
+
+nav ul li:nth-child(5) a:active {
+    color: #0f4030;
+    border:#0F4030 3px solid;
+    background-color: #24a87c;
+}
+
+/* location */
+nav ul li:nth-child(4) a {
+    display: flex;
+    flex-direction: row;
+    width: 12rem;
+    height: 1.5rem;
+    align-items: center;
+}
+
+/* login and logout */
+nav ul li:nth-child(6){
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 1rem;
+}
+
+nav ul li:nth-child(6) form input{
+    width: 4.5rem;
+    padding: 0.5rem;
+    border: none;
+    margin-left: 0.5rem;
+    border-radius: 6px; 
+    background: #1f8723;
+    font-size: 14pt;
+}
+
+nav ul li:nth-child(6) form input:hover {
+    background: #2dbf32;
+}
+
+nav ul li:nth-child(6) form input:active {
+    background: #9befa7;
+}
+
+
+
+
+
+
+#map_img {
+    margin-right: 0.5rem;
+    width: 2rem;
+    height: 2rem;
+}
+
+#burger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 10;
+}
+
+#burger .bar {
+    width: 100%;
+    height: 3px;
+    background-color: #2e7d22;
+    border-radius: 10px;
+    transition: all 0.3s linear;
+    position: relative;
+    transform-origin: 1px;
+  }
+
+#burger.active .bar:nth-child(1) {
+    transform: rotate(45deg);
+    top: 0px;
+  }
+  
+  #burger.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+  
+  #burger.active .bar:nth-child(3) {
+    transform: rotate(-45deg);
+    top: 0px;
+  }
+
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+}
+
+nav ul a {
+    font-family: 'Karla', sans-serif;
+    text-decoration: none;
+    padding: 1rem;
+}
+
+nav ul a:hover{
+    font-weight: bold;
+    color: #1f8723;
+}
+
+nav ul li:nth-child(5) a:hover {
+    border: #1f8723 2px solid;
+}
+
+section {
+    display: flex;
+    gap: 2rem 1rem;
+    flex-direction: row;
+}
+
+
+
+@media (max-width: 500px) {
+    .lemon {
+        display: block;
+        height: auto;
+    }
+
+    .rest-name {
+        display: none;
+    }
+
+    #logo {
+        padding: 0;
+        position: absolute;
+        height: auto;
+        width: 1.6em;
+        left: 1rem;
+        bottom: 1rem;
+        margin-right: 2rem;
+    }
+
+    header {
+        position: sticky;
+        top: 0;
+        display: flex;
+        flex-direction: row;
+        height: 6rem;
+        z-index: 1000000;
+    }
+
+    .burgwrapper {
+        position: absolute;
+        right: 0;
+        bottom: 1rem;
+        padding: 1rem;
+        margin-right: 2rem;
+    }
+
+    #burger {
+        display: flex;
+    }
+
+    #nav-menu {
+        transition: max-height 0.5s ease-in-out;
+        /* display: block; */
+    }
+    #nav-menu ul li a{
+        animation-delay: 6s;
+        opacity: 0;
+        
+    } 
+    #nav-menu.active ul li a{
+        animation-delay: 6s;
+        opacity: 1;
+    }
+    #nav-menu.active {
+        padding: 3rem 0 4rem 0;
+        max-height: 30rem;
+    }
+
+    nav ul > * {
+        margin: 0;
+    }
+
+    nav ul li a {
+        margin: 0;
+        padding: 0;
+    }
+
+    nav ul li:nth-child(4) a,
+    nav ul li:nth-child(6) a {
+        flex-direction: row-reverse;
+    }
+
+    nav ul li:nth-child(4) a,
+    nav ul li:nth-child(5) a,
+    nav ul li:nth-child(6) a
+    {
+        justify-content: flex-start;
+        width: fit-content;
+    }
+
+    nav ul li:nth-child(5) a {
+        border: none; 
+        padding: 0;
+    }
+
+    nav ul li:nth-child(6){
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0rem;
+    }
+
+    nav ul li:nth-child(6){
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0rem;
+        justify-content: space-between;
+    }
+
+    nav ul li:nth-child(6) form input{
+        width: fit-content;
+        background: transparent;
+        font-size: 16pt;
+        font-weight: bolder;
+    }
+
+
+    #user_img {
+        margin-left: 1rem;
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    #map_img {
+        margin-left: 1rem;
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    nav {
+        display: flex;
+        flex-direction: column;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 10s ease-in-out;
+    }
+
+    nav ul {
+        margin: 0 1rem 0 1rem;
+    }
+
+    nav.active {
+        max-height: 20rem;
+        padding: 1rem;
+        width: 100%; 
+        display: flex;
+
+    }
+
+    
+
+    nav ul {
+        flex-direction: column;
+    }
+
+    nav ul li {
+        width: 100%;
+        text-align: left;
+        padding: 0.1em;
+    }
+    
+    nav ul {
+        flex-direction: column;
+    }
+
+    #nav-menu {
+        position: absolute;
+        top: 6rem;
+        right: 0;
+        width: 100%;
+    }
+
+
+}

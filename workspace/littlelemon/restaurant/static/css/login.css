@@ -1,0 +1,60 @@
+.sl-form {
+    margin: auto auto;
+    width:  40%;
+    padding: 3em;
+}
+
+.signup-form, .login-form {
+    padding: 2em;
+    margin: 2rem;
+    border-radius: 1rem;
+}
+
+.signup-form h2, .login-form h2 {
+    color: #fafaf6;
+    background-color: #0f4030;
+    padding: 1rem;
+    border-radius: 1rem 1rem 0 0;
+}
+
+
+
+#signup-form, #login-form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+} 
+
+.signup-form label, .login-form label { 
+    display: block; 
+    margin-bottom: 1.5rem; 
+} 
+
+button[type="submit"] {
+    border: transparent;
+    padding: 1rem 1rem;
+    cursor: pointer;
+    color: #fff;
+    background-color: #4CAF50;
+    border-radius: 5px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #3e8e41;
+}
+
+.swap {
+    margin: 3rem 0 1.5rem 0;
+    border: none;
+    background-color: transparent;
+    color:blue;
+    cursor:pointer;
+}
+
+.sl-form input {
+    width: 100%;
+}
+

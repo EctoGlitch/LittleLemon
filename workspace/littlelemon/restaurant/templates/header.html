@@ -1,0 +1,62 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Little Lemon{% endblock %}</title>
+
+    <link
+      rel="preload"
+      href="{% static 'css/header.css' %}"
+      onload="this.rel = 'stylesheet'"
+    >
+    
+    <link 
+      rel="stylesheet" 
+      href="{% static 'css/style.css' %}"
+    >
+</head>
+<body>
+    <header>
+        <div class="lemon">
+          <img id='logo' alt='Little Lemon logo' src="{% static 'img/logo_mob.png' %}" />
+          <h1 class="rest-name">Little Lemon</h1>
+        </div>
+
+        <nav id="nav-menu">
+          <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
+            <li><a href="{% url 'menu' %}">Menu</a></li>
+            <li><a href="{% url 'about' %}#map"><img id="map_img" src="{% static 'img/maps_icon.png' %}">Find us</a></li>
+            <li><a href="{% url 'book' %}">Book A Table</a></li>
+            
+            {% if user.is_authenticated %}
+              <li>{{ user.username }} 
+                <form action="{% url 'logout' %}" method="GET">
+                      {% csrf_token %}
+                      <input type="submit" value="Logout" />
+                </form>
+              </li>
+            {% else %}
+              <li><a href="{% url 'login' %}" ><img id="user_img" src="{% static 'img/user.png' %}">Sign In / Register</a></li>
+            {% endif %}
+          
+          </ul>
+        </nav>
+        
+        <div class="burgwrapper">
+          <button id="burger">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+          </button>
+        </div>
+        
+      </header>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

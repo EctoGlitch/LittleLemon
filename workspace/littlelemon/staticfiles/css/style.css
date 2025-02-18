@@ -1,89 +1,87 @@
+
+
+* {
+    padding: 0%;
+    margin: 0%;
+}
+
 body {
     font-family: 'Karla', sans-serif;
 }
 
-
-
-
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h5, h6 {
     font-family: 'Markazi Text', serif;
-    letter-spacing: 2px;;
+    letter-spacing: 2px;
+}
+
+h4 {
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 2px;
 }
 
 h1 {
     font-size: 4rem;
-    margin-top: 1.5rem;
     margin-bottom: 0;
 }
+.welcome {
+    color:#DDCE00;
+}
+
 
 h2 {
     font-size: 2.5rem;
     color: #333333;
-    margin:1rem 0;
+    margin: 1rem 0;
 }
 
 p, ul{
     font-size: 1.25rem;;
 }
 
-a {
-    color: #EE9972;
-    text-decoration: none;
+
+main.about {
+    background-image: url('../img/littlelemon_store_front2.png');
+    background-size: cover;
+    background-position: center;
+    position: relative;
 }
 
-a:hover {
-    text-decoration: underline;
+main.about::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(270deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.9));
+    pointer-events: none;
 }
 
-header img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 100%;
-    height: auto;
+main.about > * {
+    position: relative;
+    z-index: 2;
+    padding: 3em;
 }
 
 
-nav {
-    background-color: #495E57;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    margin-bottom: 0px;
+
+main.about section {
+    color: white;
+    flex-direction: column;
+    margin: 2em 0 0 6em;
+    width: 50%;
 }
 
-nav ul {
-    list-style: none;
-    font-size: 1.5rem;
-    text-align: center;
-    padding-inline-start: 0rem;
-    margin-bottom: 0px;
+main.about h1 {
+    padding: 1em 0 0em 1em;
 }
 
-nav ul li {
-    display: inline-block;
-    margin: 0.5rem;
+main.about p {
+    padding: 1em 0 1em 1em;
 }
 
-nav ul a {
-    color: #EDEFEE;
-    text-decoration: none;
-}
-
-nav ul a:active {
-    text-decoration: underline;
-}
-
-nav ul a:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 0.1rem;
-}
-
-section {
-    display: flex;
-    gap: 2rem 1rem;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    flex-direction: row;
+main.book {
+    padding: 6em;
 }
 
 article {
@@ -103,6 +101,146 @@ main article {
     padding-left: 1rem;
     padding-right: 1rem;
 }
+main.about article {
+    border: none;
+}
+
+#hero h1{
+    color:#DDCE00;
+}
+
+
+
+.home section article{
+    padding: 3rem;
+}
+.home section article p{
+    padding-top: 1.5rem;
+}
+
+
+.menubanner {
+    position: relative;
+    height: fit-content;
+}
+
+.menubanner_text {
+    width: 60%;
+    position: relative;
+    background-color: #0f4030;
+    height: 82vh;
+    clip-path: polygon(0 0, 100% 0, 72% 100%, 0% 100%);
+}
+
+#pizza_img {
+    width: 60%;
+    height: 82vh;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: -1;
+}
+
+/* $8 */
+.menubanner_text h4:nth-child(1) {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-size: 200pt;
+    font-weight: bolder;
+    color: #fcf539;
+}
+
+/* pizza deal */
+.menubanner_text h4:nth-child(2) {
+    position: absolute;
+    top: 2rem;
+    left: 22.5rem;
+    font-size: 96pt;
+    font-weight: extra-bold;
+    color: #fafafa;
+}
+
+/* members exclusive */
+.menubanner_text h4:nth-child(3) {
+    position: absolute;
+    top: 23rem;
+    left: 2.5rem;
+    font-size: 36pt;
+    font-weight: extra-bold;
+    color: #fcf539;
+}
+
+/*Every monday and friday*/
+.menubanner_text h4:nth-child(4) {
+    position: absolute;
+    top: 33rem;
+    left: 2.5rem;
+    font-size: 36pt;
+    font-weight: extra-bold;
+    color: #fafafa;
+}
+
+
+
+
+/* restaraunt menu */
+#menu_nav {
+    height: 5em;
+    position: sticky;
+    scrollbar-gutter: stable;
+    overflow-x: hidden;
+    top: 6rem;
+    background-color: #fcf539;
+}
+
+#menu_nav ul {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+
+
+#menu_nav ul li {
+    flex: 1;
+    text-align: center;
+    padding: 1em;
+    background-color: #fcf539;
+    color: #fafafa;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    list-style: none;
+}
+
+#menu_nav ul li a {
+    color: #0f4030;
+    font-weight: bold;
+    text-decoration: none;
+}
+#menu_nav ul li a:hover {
+    color: #1a694f;
+}
+
+
+/* menu grid */
+#menu_items {
+    margin: auto auto;
+    width: 80%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 1rem;
+    padding: 1rem;
+}
+
+.menu_img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+
 
 figure {
     margin: 0;
@@ -111,6 +249,7 @@ figure {
 label {
     font-weight: bold;
     display: block;
+    margin-top: 0.5rem;
     margin-bottom: 1rem;
   }
 
@@ -121,6 +260,9 @@ input{
     line-height: 1.5rem;
     box-sizing: border-box;
 }
+input:active, input:focus {
+    border: 1px solid #0F4030;
+}
 
 select {
     width: 80%;
@@ -129,7 +271,7 @@ select {
     line-height: 1.5rem;
     box-sizing: border-box;
     background-color: #ffffff;
-    border: 1px solid #495E57;
+    border: 1px solid #0F4030;
     border-radius: 4px;
     cursor: pointer;
     appearance: none;
@@ -152,9 +294,10 @@ select {
 }
 
 #submit {
+    margin-top: 2.5em;
     padding: .5rem 1rem;
-    border: 1px solid #495E57;
-    background-color:#495E57;;
+    border: 1px solid #0F4030;
+    background-color:#0F4030;;
     border-radius: 5px;
     width: 80%;
     font-size: 1.25rem;
@@ -169,8 +312,8 @@ select {
 
 #subit:active {
     background-color: #ffffff;
-    color: #495E57;
-    border-color: #495E57;
+    color: #0F4030;
+    border-color: #0F4030;
 }
 
 #hero {
@@ -179,7 +322,7 @@ select {
     background-position: 75%;
     color: white;
     min-height: 200px;
-    text-align: center;;
+    text-align: center;
 }
 
 #hero p {
@@ -204,35 +347,15 @@ select {
 
 .cta:hover {
     color:#fff;
-    background:#495E57;
-    border: 3px solid #495E57; 
+    background:#0F4030;
+    border: 3px solid #0F4030; 
   }
 
   .heading-shadow {
     text-shadow: 1px 1px 4px #333333;
   }
 
-footer {
-    background-color: #EDEFEE;
-    padding: 1rem;
-    display: flex;
-    gap: 2rem 1rem;
-}
 
-footer img {
-    max-width: 50%;
-}
-
-footer p {
-    border-top: #333333;
-    border-style: solid;
-    border-width: 0.1rem;
-    border-bottom: none;
-    border-left: none;
-    border-right: none;
-    text-align: right;
-    padding-top: 1rem;;
-}
 
 .row {
     display: flex;
@@ -274,11 +397,178 @@ footer p {
 }
 
 #map {
-    margin: auto auto;
-    height: 400px;
-    width: 40%;
+    height: 250px;
+    width: 100%;
 }
+/*header + footer*/
 
+@media (max-width: 500px) {
+
+    #map {
+        height: 400px;
+    }
+
+    main.about {
+        background-image: url('../img/littlelemon_store_front2.png');
+        background-size: cover;
+        background-position: -1100px center;
+        position: relative;
+    }
+
+    main.about h1.welcome {
+        margin: 0;
+        padding: 3rem 0 3rem 0;
+        text-align: center;
+        line-height: 3.5rem;
+        filter: drop-shadow(2px 2px 2px #333333);
+    }
+
+    main.about section {
+        margin: 0;
+        padding: 0;
+        width: 90%;
+        text-align: center;
+    }
+
+    /* menu banner*/
+    .menubanner {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        height: 35rem;
+        background-image: url("../img/menu/arugula-pizza.jpg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover; 
+        background-color: transparent;
+    }
+
+    .menubanner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: inherit;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover; 
+        transform: rotate(180deg);
+    }
+    
+    .menubanner_text {
+        background-color: #030c09;
+        background: linear-gradient(170deg, 
+            rgba(0, 0, 0, 1), 
+            rgba(0, 0, 0, 0.9), 
+            rgba(0, 0, 0, 0.8), 
+            rgba(0, 0, 0, 0.7), 
+            rgba(0, 0, 0, 0.6),
+            rgba(0, 0, 0, 0.0),
+            rgba(0, 0, 0, 0.0)
+            );
+        width: 100%;
+        height: 35rem;
+        clip-path: polygon(0 0, 100% 0, 100% 83%, 0 100%);
+    }
+    
+    #pizza_img {
+        display: none;
+    }
+    
+    /* $8 */
+    .menubanner_text h4:nth-child(1) {
+        top: 1.5rem;
+        left: 0.8rem;
+        font-size: 72pt;
+    }
+    
+    /* pizza deal */
+    .menubanner_text h4:nth-child(2) {
+        top: 1rem;
+        left: 10rem;
+        font-size: 42pt;
+    }
+
+    /*Every monday and friday*/
+    .menubanner_text h4:nth-child(4) {
+        top: 11rem;
+        left: 1.5rem;
+        font-size: 25pt;
+    }
+    
+    /* members exclusive */
+    .menubanner_text h4:nth-child(3) {
+        top: 21rem;
+        width: 3rem;
+        left: 1.5rem;
+        font-size: 25pt;
+    }
+
+    /* menu links*/
+
+    #menu_nav::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #fcf539;
+        width: 100%;
+        height: 100%;
+        filter: blur(2rem);
+        
+        pointer-events: none;
+    }
+
+    #menu_nav {
+        clip-path: polygon(0% 0%, 0% 100%, 25% 100%, 25% 0, 74% 0, 74% 100%, 22% 100%, 25% 100%, 100% 100%, 100% 0%);
+        margin: auto;
+        height: 5rem;
+        width: 100%;
+        display: flex;
+        overflow-x: scroll;
+        scrollbar-gutter: stable;
+        justify-content: space-evenly;
+        align-items: center;
+        padding: 0;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 6rem;
+    }
+
+    
+    
+
+    #menu_items::-webkit-scrollbar {
+        display: none;
+    }
+
+    .menu_item_links {
+        margin-right: 1rem;
+        flex-shrink: 0;
+        width: fit-content;
+        text-wrap: nowrap;
+    }
+
+    #menu_items::-webkit-scrollbar {
+        display: none;
+    }
+
+    /**************************/
+       
+
+    /* menu grid */
+    #menu_items {
+        margin: auto auto;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        grid-gap: 1rem;
+        padding: 0rem;
+    }
+
+}
 
 @media (max-width: 800px) {
     section {

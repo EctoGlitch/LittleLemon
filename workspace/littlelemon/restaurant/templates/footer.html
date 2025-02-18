@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Little Lemon{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <footer>
+        <article>
+          <h1 class="yellowfoot">Hours:</h1>
+          <ul>
+            <li>Mon - Fri: 2pm - 10pm</li>
+            <li>Sat: 2pm - 11pm</li>
+            <li>Sun: 2pm - 9pm</li>
+            <li>Except for public holidays.</li>
+          </ul>
+          <p>
+            
+          </p>
+        </article>
+    
+        <article>
+          <h1 class="yellowfoot">Find us at:</h1>
+          <address>
+            123 Main Street<br />
+            Chicago, IL 60601
+          </address>
+        </article>
+        <article>
+          <h1 class="yellowfoot">Call us at:</h1>
+          <p>+1 (312)-555-1234</p>
+        </article>
+        <article>
+          <h1 class="yellowfoot">Follow us:</h1>
+          <ul class="soci">
+            <li>
+              <a href="https://www.twitter.com" target="_blank"><img src="{% static 'img/twitter.png' %}" /></a>
+            </li>
+            <li>
+              <a href="https://www.instagram.com" target="_blank"><img src="{% static 'img/instagram.png' %}" /></a>
+            </li>
+            <li>
+              <a href="https://www.tiktok.com" target="_blank"><img src="{% static 'img/tiktok.png' %}" /></a>
+            </li>
+            <li>
+              <a href="https://www.facebook.com" target="_blank"><img src="{% static 'img/facebook.png' %}"></a>
+            </li>
+          </ul>
+        </article>
+    
+        <article class="copy">
+          <img src="{% static 'img/logo_footer.png' %}" />
+          <p class="yellowfoot">Copyright ©{{ current_year }} Little Lemon</p>
+        </article>
+      </footer>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

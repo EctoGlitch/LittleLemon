@@ -19,6 +19,21 @@
     />
 
     <!-- Include your CSS files here -->
+
+    <link
+      rel="preload"
+      as="style"
+      href="{% static 'css/header.css' %}"
+      onload="this.rel = 'stylesheet'"
+    >
+
+    <link
+      rel="preload"
+      as="style"
+      href="{% static 'css/footer.css' %}"
+      onload="this.rel = 'stylesheet'"
+    >
+
     <link
       rel="preload"
       as="style"
@@ -34,32 +49,8 @@
     />
   </head>
 
-   <body>
-    <header>
-      <img 
-        id='logo' 
-        alt='Little Lemon logo'
-        
-        srcset=" {% static 'img/logo.png' %} 1x, {% static 'img/logo_mob.png' %} 2x"
-        sizes="(max-width: 500px) 76px"
-        src="{% static 'img/logo_mob.png' %}" 
-      />
-      <div class="burgwrapper">
-        <button id="burger">
-          <span class="bar"></span>
-          <span class="bar"></span>
-          <span class="bar"></span>
-        </button>
-      </div>
-      <nav id="nav-menu">
-        <ul>
-          <li><a href="{% url 'home' %}">Home</a></li>
-          <li><a href="{% url 'about' %}">About</a></li>
-          <li><a href="#">Menu</a></li>
-          <li><a href="#">Book</a></li>
-        </ul>
-      </nav>
-    </header>
+   <body class="home">
+    {% include 'header.html' %}
          <section>
             <article id="hero">
               <h1 class="heading_shadow">SPECIAL OFFER</h1>
@@ -70,75 +61,35 @@
             </article>
          </section>
          <section>
-            <article>
+          
+          <article>
               <h2>Our New Menu</h2>
-              <img src="{% static 'img/grill.jpg' %}">
+              <a href="{% url 'menu' %}"> 
+                <img src="{% static 'img/grill.jpg' %}">
+              </a>
               <p>
                 Our menu consists of 12-15 seasonal items based on Italian, Greek, and Turkish culture.
               </p>
               <p>
-                <a href="#">See our new menu</a>
+                <a href="{% url 'menu' %}">See our new menu</a>
               </p>
             </article>
+          
             <article>
               <h2>Book a table</h2>
-              <img src="{% static 'img/salad.jpg' %}">
+              <a href="{% url 'book' %}">
+                <img src="{% static 'img/salad.jpg' %}">
+              </a>
               <p>
                 Reserve your table for an Italian, Greek, and Turkish dining experience.
               </p>
               <p>
-                <a href="#">Book your table now</a>
+                <a href="{% url 'book' %}">Book your table now</a>
               </p>
             </article>
           </section>
-          <footer>
-            <article>
-              <h1 class="yellowfoot">Hours:</h1>
-              <ul>
-                <li>Mon - Fri: 2pm - 10pm</li>
-                <li>Sat: 2pm - 11pm</li>
-                <li>Sun: 2pm - 9pm</li>
-                <li>Except for public holidays.</li>
-              </ul>
-              <p>
-                
-              </p>
-            </article>
-    
-            <article>
-              <h1 class="yellowfoot">Find us at:</h1>
-              <address>
-                123 Main Street<br />
-                Chicago, IL 60601
-              </address>
-            </article>
-            <article>
-              <h1 class="yellowfoot">Call us at:</h1>
-              <p>+1 (312)-555-1234</p>
-            </article>
-            <article>
-              <h1 class="yellowfoot">Follow us:</h1>
-              <ul class="soci">
-                <li>
-                  <a href="https://www.twitter.com" target="_blank"><img src="{% static 'img/twitter.png' %}" /></a>
-                </li>
-                <li>
-                  <a href="https://www.instagram.com" target="_blank"><img src="{% static 'img/instagram.png' %}" /></a>
-                </li>
-                <li>
-                  <a href="https://www.tiktok.com" target="_blank"><img src="{% static 'img/tiktok.png' %}" /></a>
-                </li>
-                <li>
-                  <a href="https://www.facebook.com" target="_blank"><img src="{% static 'img/facebook.png' %}"></a>
-                </li>
-              </ul>
-            </article>
-    
-            <article class="copy">
-              <img src="{% static 'img/logo_footer.png' %}" />
-              <p class="yellowfoot">Copyright ©{{ current_year }} Little Lemon</p>
-            </article>
-          </footer>
+          
+          {% include 'footer.html' %}
           <script src="{% static 'js/nav.js' %}"></script>
         </body>
 </html>

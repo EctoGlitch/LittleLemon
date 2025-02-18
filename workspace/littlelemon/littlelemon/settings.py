@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+# Imports
 from pathlib import Path
 import os
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
@@ -28,7 +29,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'restaurant/static'),
 ]
 
-# Ensure the directory exists
+# Ensure the directory actually exists
 os.makedirs(STATIC_ROOT, exist_ok=True)
 
 # Quick-start development settings - unsuitable for production
@@ -77,6 +78,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.static',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -149,6 +151,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Authentication
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -156,6 +159,7 @@ REST_FRAMEWORK = {
         ],
 }
 
+#Defualt primary key field type
 DJOSER={
     "USER_ID_FIELD":"username"
     }
