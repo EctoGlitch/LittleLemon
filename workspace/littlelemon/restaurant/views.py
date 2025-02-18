@@ -13,7 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.parsers import JSONParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.contrib.auth import  login, logout
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.decorators import parser_classes
@@ -120,7 +120,7 @@ def logoutView(request):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-@parser_classes([JSONParser])
+@parser_classes([JSONParser, MultiPartParser, FormParser])
 class BookView(generics.ListCreateAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
@@ -130,7 +130,6 @@ class BookView(generics.ListCreateAPIView):
             date = request.GET.get('date')
             bookings = Booking.objects.filter(booking_date=date)
             data = []
-            ['name', 'no_of_guests', 'time_slot',  'booking_date']
             for booking in bookings:
                 data.append({
                     'fields': {
@@ -147,26 +146,34 @@ class BookView(generics.ListCreateAPIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            print("Received data:", request.data)
+            # print("Received data:", request.data)
 
-            serializer = BookingSerializer(data=request.data)
-            if serializer.is_valid():
-                booking = serializer.save()
-                print("Booking created:", booking)
-                return JsonResponse(serializer.data, status=201)
+            # Determine the type of data received
+            if 'name' in request.data and 'no_of_guests' in request.data and 'time_slot' in request.data and 'booking_date' in request.data:
+                serializer = BookingSerializer(data=request.data)
+                if serializer.is_valid():
+                    booking = serializer.save()
+                    return JsonResponse(serializer.data, status=201)
 
-            print("Validation errors:", serializer.errors)
-            return JsonResponse(serializer.errors, status=400)
+            # If no specific fields are found, assume JSON data
+            elif isinstance(request.data, dict):
+                serializer = BookingSerializer(data=request.data)
+                if serializer.is_valid():
+                    booking = serializer.save()
+                    # print("Booking created:", booking)
+                    return JsonResponse(serializer.data, status=201)
+
+            # Return validation errors or indicate invalid request
+            # print("Validation errors:", serializer.errors if 'is_valid' in locals() and not serializer.is_valid() else "No valid data found")
+            return Response({"error": "Invalid or missing fields"}, status=400)
 
         except Exception as e:
-            print("Unexpected error:", str(e))
+            # print("Unexpected error:", str(e))
             import traceback
             traceback.print_exc()
             return JsonResponse({'error': str(e)}, status=500)
 
-# class MenuView(generics.ListCreateAPIView):
-#     queryset = Menu.objects.all()
-#     serializer_class = MenuSerializer
+
 class MenuView(generics.ListCreateAPIView, TemplateView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
