@@ -1,5 +1,5 @@
 /* Pathing for peer testing */
-
+/**********************************************************************************************/
 restaurant/book/
 
 Setup for INSOMNIA
@@ -13,3 +13,10 @@ multipart/form-data
 "reservation": "12/12/2022",
 "time_slot": "14", // 14:00 (army time)
 
+/*************************************************************************************************/
+restaurant/booking/tables/
+displays all bookings if a valid token is provided
+
+Setup for INSOMNIA
+METHOD: GET
+http://127.0.0.1:8000/restaurant/booking/tables/

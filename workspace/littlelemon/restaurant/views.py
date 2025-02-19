@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from rest_framework import generics
+from rest_framework import generics, status, viewsets
 from django.views import generic
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
@@ -24,7 +24,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth import authenticate
-
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny
 # Create your views here.
 
 def print_test():
@@ -63,31 +64,46 @@ class login_view(APIView):
                 
         return render(request, 'login.html', {'form': form})
 
-class signup_view(SuccessMessageMixin, generic.FormView):
+class signup_view(generic.FormView):
+    permission_classes = [AllowAny]
     template_name = 'signup.html'
     form_class = SignUpForm
     success_url = reverse_lazy('home')
     success_message = 'You have successfully registered!'
 
-    def form_valid(self, form):
-        try:
-            print("Form is valid")
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(data=request.POST)
+
+        if form.is_valid():
             user = form.save()
-            login(self.request, user)
-            return super().form_valid(form)
-        
-        except Exception as e:
-            print(f"Error saving user: {e}")
+            login(request, user)  
+            token, created = Token.objects.get_or_create(user=user)
+            # print(f"Token created: {token.key}") 
+
+            return redirect('home')
+        else:
+            # print(form.errors)
             context = self.get_context_data(form=form)
-            context['error_message'] = str(e)
-            return self.render_to_response(context)
+            context['error_message'] = 'Registration failed. Please check your inputs.'
+            return render(request, self.template_name, context)
+
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user) 
+        token, created = Token.objects.get_or_create(user=user)
+        # print(f"Token created: {token.key}")
+
+        return super().form_valid(form)
 
     def form_invalid(self, form):
-        print("Form is invalid")
-        print(form.errors)
+        # This is called when the form is invalid.
         context = self.get_context_data(form=form)
-        context['error_message'] = form.errors.as_json()
-        return self.render_to_response(context)
+        context['error_message'] = 'Registration failed. Please check your inputs.'
+        return render(self.request, self.template_name, context)
 
 @api_view(['GET', 'POST'])
 @permission_classes([])
