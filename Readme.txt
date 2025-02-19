@@ -20,3 +20,20 @@ displays all bookings if a valid token is provided
 Setup for INSOMNIA
 METHOD: GET
 http://127.0.0.1:8000/restaurant/booking/tables/
+
+
+/*************************************************************************************************/
+/signup/
+creates a new user
+Setup for INSOMNIA
+METHOD: POST
+http://127.0.0.1:8000/signup/
+
+multipart/form-data
+"username": "John",
+"email": "john@email.com",
+"password1": "123456789",
+"password2": "123456789"
+
+
+

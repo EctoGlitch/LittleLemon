@@ -68,7 +68,7 @@
   <div class="sl-form" >
     <div class="signup-form" id="signup">
       <h2>Sign Up</h2>
-        <form id="signup-form" action="{% url 'signup' %}" method="POST" autocomplete="off">
+        <form id="signup-form" action="{% url 'signup' %}" method="POST" enctype="multipart/form-data" autocomplete="off">
           {% csrf_token %}
           <label for="username">Username:</label>
           <input type="text" id="username" name="username"><br><br>

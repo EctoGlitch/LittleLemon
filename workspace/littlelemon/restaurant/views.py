@@ -16,10 +16,10 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.contrib.auth import  login, logout
 from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.decorators import parser_classes
+from rest_framework.decorators import parser_classes, api_view, permission_classes
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view, permission_classes
 import json
+from django.middleware.csrf import get_token
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
@@ -64,46 +64,52 @@ class login_view(APIView):
                 
         return render(request, 'login.html', {'form': form})
 
-class signup_view(generic.FormView):
-    permission_classes = [AllowAny]
-    template_name = 'signup.html'
-    form_class = SignUpForm
-    success_url = reverse_lazy('home')
-    success_message = 'You have successfully registered!'
 
+class signup_view(APIView):
+    permission_classes = [AllowAny]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+    
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(data=request.POST)
+        form_class = SignUpForm
+
+        if 'multipart/form-data' in request.META['CONTENT_TYPE']:
+            form = form_class(data=request.data)
+
+        elif 'application/json' in request.META['CONTENT_TYPE']:
+            try:
+                user_data = json.loads(request.body.decode('utf-8'))
+                form = form_class(user_data)
+            except (json.JSONDecodeError, ValueError):
+                return Response({"error": "Invalid JSON"}, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            form = form_class(request.POST)
 
         if form.is_valid():
             user = form.save()
-            login(request, user)  
+            login(request, user)
             token, created = Token.objects.get_or_create(user=user)
             # print(f"Token created: {token.key}") 
 
             return redirect('home')
+
         else:
-            # print(form.errors)
-            context = self.get_context_data(form=form)
-            context['error_message'] = 'Registration failed. Please check your inputs.'
-            return render(request, self.template_name, context)
+            context = {
+                'form': form,
+                'error_message': 'Registration failed. Please check your inputs.'
+            }
+            return render(request, 'signup.html', context)
 
-    def form_valid(self, form):
-        user = form.save()
-        login(self.request, user) 
-        token, created = Token.objects.get_or_create(user=user)
-        # print(f"Token created: {token.key}")
+    def get(self, request, *args, **kwargs):
+        form_class = SignUpForm
+        form = form_class()
+        csrf_token = get_token(request)
+        return render(request, 'signup.html', {'form': form, 'csrf_token': csrf_token})
 
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        # This is called when the form is invalid.
-        context = self.get_context_data(form=form)
-        context['error_message'] = 'Registration failed. Please check your inputs.'
-        return render(self.request, self.template_name, context)
 
 @api_view(['GET', 'POST'])
 @permission_classes([])
