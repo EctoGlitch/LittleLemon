@@ -68,10 +68,13 @@
     <div class="sl-form" >
       <div id="login" class="login-form">
           <h2>Login</h2>
-          <form id="login-form" autocomplete="off" action="{% url 'login' %}" method="POST">
+          {% if error %}
+              <p class ='red'>{{ error }}</p>
+          {% endif %}
+          <form id="login-form" autocomplete="off" action="{% url 'login' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
               <label for="username">Username: </label>
-              <input type="text" id=" username" name="username"><br><br>
+              <input type="text" id="username" name="username"><br><br>
               <label for="password">Password:</label>
               <input type="password" id="password" name="password"><br><br>
               <a class="swap" href="/signup">Don't have an account? Sign up now!</a>

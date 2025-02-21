@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from rest_framework import generics, status, viewsets
 from django.views import generic
 from django.urls import reverse_lazy
@@ -12,21 +12,28 @@ from rest_framework import viewsets, permissions
 from rest_framework.permissions import IsAuthenticated
 from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt, csrf_protect
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.contrib.auth import  login, logout
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.decorators import parser_classes, api_view, permission_classes
 from rest_framework.authtoken.models import Token
 import json
+from django.contrib.auth.forms import AuthenticationForm
 from django.middleware.csrf import get_token
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
-from django.contrib.auth import authenticate
+from django.contrib.auth import login, authenticate, logout
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
+from django.contrib.sessions.models import Session
+import datetime
+from django.views import View
+import logging
+from rest_framework_simplejwt.tokens import AccessToken
 # Create your views here.
+logger = logging.getLogger(__name__)
 
 def print_test():
     data = 'error in data'
@@ -38,37 +45,59 @@ class HomeView(TemplateView):
 class AboutView(TemplateView):
     template_name = 'about.html'
 
-
-# class login_view(TemplateView):
-#     template_name = 'login.html'
-
-class login_view(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    def get(self, request):
-        form = LoginForm(request.POST)
-        return render(request, 'login.html', {'form': form})
+# 
+@method_decorator(csrf_exempt, name='dispatch')
+@permission_classes([AllowAny])
+class APILoginView(APIView):
+    @csrf_exempt
     def post(self, request):
-        form = LoginForm(request.POST)
-        
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            
-            user = authenticate(username=username, password=password)
+        print("POST request received")
+        try:
+            data = request.data
+            username = data.get('username')
+            password = data.get('password')
+
+            if not username or not password:
+                return Response({"error": "Username and password are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+            user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('home')  # Redirect to the home page after successful login
+                token, _ = Token.objects.get_or_create(user=user)
+                # _ bool for token obj
+                print()
+                print("Token created: ", token)
+                return Response({"Response": "login sucessful"}, status=status.HTTP_200_OK)
             else:
-                print('Invalid username or password')  # Debugging statement
-                return render(request, 'login.html', {'error': 'Invalid credentials'})
-                
+                return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@method_decorator(csrf_protect, name='dispatch')
+class BLoginView(View):
+    def get(self, request):
+        form = AuthenticationForm()
         return render(request, 'login.html', {'form': form})
+
+    def post(self, request):
+        print("BLoginView called")
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            login(request, form.get_user())
+            return redirect('home')
+        else:
+            return render(request, 'login.html', {'form': form, 'error': 'Invalid credentials'})   
+
+
 
 
 class signup_view(APIView):
     permission_classes = [AllowAny]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
-    
+
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
@@ -77,26 +106,21 @@ class signup_view(APIView):
         form_class = SignUpForm
 
         if 'multipart/form-data' in request.META['CONTENT_TYPE']:
-            form = form_class(data=request.data)
-
+            form = form_class(request.POST)
         elif 'application/json' in request.META['CONTENT_TYPE']:
             try:
                 user_data = json.loads(request.body.decode('utf-8'))
                 form = form_class(user_data)
             except (json.JSONDecodeError, ValueError):
                 return Response({"error": "Invalid JSON"}, status=status.HTTP_400_BAD_REQUEST)
-
         else:
-            form = form_class(request.POST)
+            return HttpResponseBadRequest("Unsupported Content-Type")
 
         if form.is_valid():
             user = form.save()
             login(request, user)
             token, created = Token.objects.get_or_create(user=user)
-            # print(f"Token created: {token.key}") 
-
             return redirect('home')
-
         else:
             context = {
                 'form': form,
@@ -129,8 +153,8 @@ def logoutView(request):
             if 'HTTP_AUTHORIZATION' in request.headers and request.headers['HTTP_AUTHORIZATION'].startswith('Token'):
                 user = request.user  # Token authentication is used
                 logout(request)
-                token = Token.objects.get(user=user)
-                token.delete()
+                request.session.flush()
+                request.session.cycle_key()
                 return redirect('home')
             else:
                 print("No valid token found for logout")
@@ -237,6 +261,24 @@ class MenuItemView(generics.ListCreateAPIView):
 class SingleMenuItemView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
+    serializer_class = MenuSerializer
 
 
 
+
+
+#testing
+# testing csrf token
+class CsrfTestView(View):
+    @method_decorator(csrf_protect)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        print(request)
+        print(request.META.get('CSRF_COOKIE'))
+        return HttpResponse("CSRF token validated!")
+
+    def post(self, request):
+        print(request) #debugging
+        return HttpResponse("CSRF token validated!")

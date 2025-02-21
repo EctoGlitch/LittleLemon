@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 # Imports
+from datetime import timedelta
 from pathlib import Path
 import os
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
@@ -57,17 +58,26 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# cookies and csrf
+CSRF_COOKIE_NAME = 'csrftoken'  # Ensure this is set correctly
+CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'  # Ensure this is set correctly
+CSRF_COOKIE_SECURE = False  # Set to True in production
+CSRF_COOKIE_HTTPONLY = False  # Set to True in production
+CSRF_COOKIE_SAMESITE = 'Lax' # Set to 'Lax' or 'Strict' as needed
+
 
 ROOT_URLCONF = 'littlelemon.urls'
 
@@ -88,6 +98,7 @@ TEMPLATES = [
     },
 ]
 
+# SESSION_COOKIE_AGE = 1200
 
 WSGI_APPLICATION = 'littlelemon.wsgi.application'
 
@@ -106,9 +117,10 @@ DATABASES = {
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
         }
-    }   
+    }
 }
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -163,3 +175,34 @@ REST_FRAMEWORK = {
 DJOSER={
     "USER_ID_FIELD":"username"
     }
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+}
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'restaurant': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#         },
+#     },
+# }
+
+

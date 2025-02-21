@@ -4,6 +4,10 @@
     padding: 3em;
 }
 
+.red {
+    color: rgb(228, 41, 41);
+}
+
 .signup-form, .login-form {
     padding: 2em;
     margin: 2rem;

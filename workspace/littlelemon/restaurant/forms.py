@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.forms import ModelForm
 from .models import Booking
 from django.contrib.auth.models import User
@@ -11,14 +11,8 @@ class BookingForm(ModelForm):
         fields = "__all__"
         
 # for login
-class LoginForm(forms.Form):
-    username = forms.CharField(max_length=100)
-    password = forms.CharField(widget=forms.PasswordInput)
-    def clean(self):
-        cleaned_data = self.cleaned_data
-        username = cleaned_data.get('username')
-        password = cleaned_data.get('password')
-        user = User.objects.filter(username=username).first()
+class LoginForm(AuthenticationForm):
+    pass
    
 # for registration
 class SignUpForm(UserCreationForm):

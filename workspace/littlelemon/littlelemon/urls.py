@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from restaurant import views
-from restaurant.views import HomeView, logoutView
+from restaurant.views import HomeView, logoutView, APILoginView, CsrfTestView
 from rest_framework.authtoken.views import obtain_auth_token
 from django.conf import settings
 from django.conf.urls.static import static
@@ -44,9 +44,13 @@ urlpatterns = [
     path('auth/', include('djoser.urls.authtoken')),
     path('api-token-auth/', obtain_auth_token),
     
-    path('login/', views.login_view.as_view(), name='login'),
-    path('signup/', views.signup_view.as_view(), name='signup'),
+
+    path('login/', views.BLoginView.as_view(), name='login'),
+    path('api/login/', views.APILoginView.as_view(), name='api-login'),
+    
+    # path('signup/', views.signup_view.as_view(), name='signup'),
     path('logout/', logoutView, name='logout'),
+    path('csrf-test/', views.CsrfTestView.as_view(), name='csrf_test'),
     
   #force static files to be served no mater what
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
