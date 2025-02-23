@@ -91,48 +91,37 @@ class BLoginView(View):
         else:
             return render(request, 'login.html', {'form': form, 'error': 'Invalid credentials'})   
 
-
-
-
-class signup_view(APIView):
-    permission_classes = [AllowAny]
-    parser_classes = [MultiPartParser, FormParser, JSONParser]
-
-    @method_decorator(csrf_exempt)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        form_class = SignUpForm
-
-        if 'multipart/form-data' in request.META['CONTENT_TYPE']:
-            form = form_class(request.POST)
-        elif 'application/json' in request.META['CONTENT_TYPE']:
-            try:
-                user_data = json.loads(request.body.decode('utf-8'))
-                form = form_class(user_data)
-            except (json.JSONDecodeError, ValueError):
-                return Response({"error": "Invalid JSON"}, status=status.HTTP_400_BAD_REQUEST)
+class APISignUpView(APIView):
+    def post(self, request):
+        form = SignUpForm(request.data)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            token, created = Token.objects.get_or_create(user=user)
+            print("User created: ", user)
+            print("Token created: ", token)
+            return Response({"Response": "signup sucessful"}, status=status.HTTP_201_CREATED)
         else:
-            return HttpResponseBadRequest("Unsupported Content-Type")
+            return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
+class BSignUpView(View):
+    def get(self, request):
+        form = SignUpForm()
+        if request.user.is_authenticated:
+            return redirect('home')
+        return render(request, 'signup.html', {'form': form})
+    
+    def post(self, request):
+        print("BSignUpView called")
+        form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             token, created = Token.objects.get_or_create(user=user)
             return redirect('home')
         else:
-            context = {
-                'form': form,
-                'error_message': 'Registration failed. Please check your inputs.'
-            }
-            return render(request, 'signup.html', context)
-
-    def get(self, request, *args, **kwargs):
-        form_class = SignUpForm
-        form = form_class()
-        csrf_token = get_token(request)
-        return render(request, 'signup.html', {'form': form, 'csrf_token': csrf_token})
+            return render(request, 'signup.html', {'form': form, 'error': 'Invalid credentials'})
 
 
 @api_view(['GET', 'POST'])

@@ -48,7 +48,9 @@ urlpatterns = [
     path('login/', views.BLoginView.as_view(), name='login'),
     path('api/login/', views.APILoginView.as_view(), name='api-login'),
     
-    # path('signup/', views.signup_view.as_view(), name='signup'),
+    path('signup/', views.BSignUpView.as_view(), name='signup'),
+    path('api/signup/', views.APISignUpView.as_view(), name='api-signup'),
+    
     path('logout/', logoutView, name='logout'),
     path('csrf-test/', views.CsrfTestView.as_view(), name='csrf_test'),
     
