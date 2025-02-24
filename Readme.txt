@@ -114,6 +114,17 @@ application/json
   "email": "john@email.com",
 }
 
+METHOD: DELETE
+http://127.0.0.1:8000/api/book-api/
+deletes booking with corresponding id
+
+application/json
+{
+  "id": 1
+}
+
+
+
 BROWSER
 METHOD: POST
 http://127.0.0.1:8000/book/

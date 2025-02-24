@@ -190,6 +190,22 @@ class APIBookview(generics.ListCreateAPIView):
             return JsonResponse({'response': 'Booking created successfully'})
         else:
             return JsonResponse({'response': serializer.errors})
+        
+    def delete(self, request, *args, **kwargs):
+        try:
+            if 'id' not in request.data:
+                return Response({'response': 'Booking id is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            booking = Booking.objects.get(id=request.data['id'])
+            booking.delete()
+            
+            return Response({'response': 'Booking deleted successfully'}, status=status.HTTP_200_OK)
+        
+        except Booking.DoesNotExist:
+            return Response({'response': 'Booking does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+        except Exception as e:
+            return Response({'response': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BBookingView(APIView):
