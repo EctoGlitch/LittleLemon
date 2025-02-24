@@ -231,8 +231,42 @@ class BBookingView(APIView):
             return Response({'response': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
 
+class APIMenuView(generics.ListCreateAPIView):
+    queryset = Menu.objects.all()
+    serializer_class = MenuSerializer
+    
+    def list(self, request, *args, **kwargs):
+        params = request.query_params
+        queryset = Menu.objects.all()
+        if 'main' in params and params.get('main') == 'true':
+            print('MAIN')
+            queryset = Menu.objects.filter(category_fk=1) 
+            print ('debug: main', queryset)
+        elif 'side' in params and params.get('side') == 'true':
+            print('SIDE')
+            queryset = Menu.objects.filter(category_fk=2)
+            print ('debug: side', queryset)
+        elif 'dessert' in params and params.get('dessert') == 'true':
+            print('DESSERT')
+            queryset = Menu.objects.filter(category_fk=3)
+            print ('debug: dessert', queryset)
+        elif 'non-alcoholic' in params and params.get('non-alcoholic') == 'true':
+            print('NON-ALCOHOLIC')
+            queryset = Menu.objects.filter(category_fk=4)
+            print ('debug: non-alcoholic', queryset)
+        elif 'alcoholic' in params and params.get('alcoholic') == 'true':
+            print('ALCOHOLIC')
+            queryset = Menu.objects.filter(category_fk=5)
+            print ('debug: alcoholic', queryset)
+        else:
+            print('ALL')
+            queryset = Menu.objects.all()
+            print ('debug: all', queryset)
+            
+        serializer = MenuSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-class MenuView(generics.ListCreateAPIView, TemplateView):
+class BMenuView(generics.ListAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
     renderer_classes = [TemplateHTMLRenderer]
@@ -240,17 +274,16 @@ class MenuView(generics.ListCreateAPIView, TemplateView):
 
     def get(self, request, *args, **kwargs):
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-           
+        
             queryset = Menu.objects.all()
             serializer = MenuSerializer(queryset, many=True)
             return JsonResponse(serializer.data, safe=False)
         else:
-           
+        
             context = {
                 'menu_items': Menu.objects.all() 
             }
             return render(request, self.template_name, context)
-
 
 class BookingViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]

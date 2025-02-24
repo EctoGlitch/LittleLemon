@@ -96,11 +96,11 @@ application/json
 /*************************************************************************************************/
 INSOMNIA
 METHOD: GET
-http://127.0.0.1:8000/api/booking/
+http://127.0.0.1:8000/api/book-api/
 if no date is provided in the url parameters the all bookings will be displayed
 
 for a specific date the endpoint will return all bookings for that date
-http://127.0.0.1:8000/api/booking/?date=2025-02-18
+http://127.0.0.1:8000/api/book-api/?date=2025-02-18
 
 
 METHOD: POST
@@ -120,3 +120,21 @@ http://127.0.0.1:8000/book/
 The browser will automatically send the CSRF token in the headers tab
 Input valid valid data in the form fields
 click submit
+
+
+/*************************************************************************************************/
+INSOMNIA
+METHOD: GET
+http://127.0.0.1:8000/api/menu-api/
+if no date is provided in the url parameters the all menu items will be displayed
+for a specific date the endpoint will return all menu items for that date
+
+filter by category
+http://127.0.0.1:8000/restaurant/menu-api/?alcoholic=true
+returns all alcoholic menu items
+
+BROWSER
+METHOD: GET
+http://127.0.0.1:8000/menu/
+The browser will automatically send the CSRF token in the headers tab
+click on the menu-sub navigation buttons to filter the menu items
