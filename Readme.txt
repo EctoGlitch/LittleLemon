@@ -82,10 +82,41 @@ Input valid username and password
 click submit
 
     
-
 INSOMNIA
 METHOD: POST
 http://127.0.0.1:8000/api/login/
 
+application/json
+{
+  "username": "Jane",
+  "password": "lemon123!"
+}
 
 
+/*************************************************************************************************/
+INSOMNIA
+METHOD: GET
+http://127.0.0.1:8000/api/booking/
+if no date is provided in the url parameters the all bookings will be displayed
+
+for a specific date the endpoint will return all bookings for that date
+http://127.0.0.1:8000/api/booking/?date=2025-02-18
+
+
+METHOD: POST
+http://127.0.0.1:8000/api/book/
+
+application/json
+{
+  "date": "2025-02-18",
+  "time": "12:00:00",
+  "name": "John",
+  "email": "john@email.com",
+}
+
+BROWSER
+METHOD: POST
+http://127.0.0.1:8000/book/
+The browser will automatically send the CSRF token in the headers tab
+Input valid valid data in the form fields
+click submit

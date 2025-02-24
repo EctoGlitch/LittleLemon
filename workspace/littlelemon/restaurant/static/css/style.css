@@ -88,6 +88,10 @@ main.book {
     padding: 6em;
 }
 
+#bookings p{
+    padding: 0.5em 0 0.5em 0.5em;
+}
+
 article {
     flex:1;
 }

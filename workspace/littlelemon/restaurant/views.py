@@ -152,61 +152,84 @@ def logoutView(request):
             print(f"Error during token-based logout: {e}")
             return Response({"error": str(e)}, status=500)
 
-
-
-@method_decorator(csrf_exempt, name='dispatch')
-@parser_classes([JSONParser, MultiPartParser, FormParser])
-class BookView(generics.ListCreateAPIView):
+class APIBookview(generics.ListCreateAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-
-    def get(self, request, *args, **kwargs):
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            date = request.GET.get('date')
-            bookings = Booking.objects.filter(booking_date=date)
-            data = []
-            for booking in bookings:
+    
+    def list(self, request, *args, **kwargs):
+        date = request.GET.get('date')
+        data = []
+        if date:
+            for booking in Booking.objects.filter(booking_date=date):
                 data.append({
-                    'fields': {
-                        'name': booking.name,
-                        'no_of_guests': booking.no_of_guests,
-                        'time_slot': booking.time_slot,
-                        'booking_date': booking.booking_date
-                    }
-                })
+                    'name': booking.name,
+                    'no_of_guests': booking.no_of_guests,
+                    'time_slot': booking.time_slot,
+                    'booking_date': booking.booking_date
+                    })
+            if len(data) == 0:
+                 return JsonResponse({'response': 'No bookings found for the given date'})
             return JsonResponse(data, safe=False)
         else:
-            form = BookingForm()
-            return render(request, 'book.html', {'form': form})
+            for booking in Booking.objects.all():
+                data.append({
+                    'name': booking.name,
+                    'no_of_guests': booking.no_of_guests,
+                    'time_slot': booking.time_slot,
+                    'booking_date': booking.booking_date
+                    })
+            return JsonResponse(data, safe=False)
+        
+    def post(self, request, *args, **kwargs):
+        serializer = BookingSerializer(data=request.data)
+        if serializer.is_valid():
+            if Booking.objects.filter(booking_date=request.data['booking_date'], time_slot=request.data['time_slot']).exists():
+                return JsonResponse({'response': 'Booking already exists for the given date and time slot'})
+            serializer.save()
+            
+            return JsonResponse({'response': 'Booking created successfully'})
+        else:
+            return JsonResponse({'response': serializer.errors})
 
+
+class BBookingView(APIView):
+    template_name = 'book.html'
+    serializer_class = BookingSerializer
+    
+    def get(self, request):
+        form = BookingForm()
+        date = request.GET.get('date')
+        print('date:', date)
+        
+        bookings = []
+        bookings_raw = Booking.objects.filter(booking_date=date)
+        
+        if date:
+            for booking in bookings_raw:
+                bookings.append({
+                    'name': booking.name,
+                    'no_of_guests': booking.no_of_guests,
+                    'time_slot': booking.time_slot,
+                    'booking_date': booking.booking_date
+                })
+            return JsonResponse(bookings, safe=False)
+        else:
+            print ('No bookings found for the given date')
+            pass
+        return render(request, self.template_name, {'form': form, 'bookings': bookings})
+    
     def post(self, request, *args, **kwargs):
         try:
-            # print("Received data:", request.data)
-
-            # Determine the type of data received
-            if 'name' in request.data and 'no_of_guests' in request.data and 'time_slot' in request.data and 'booking_date' in request.data:
-                serializer = BookingSerializer(data=request.data)
-                if serializer.is_valid():
-                    booking = serializer.save()
-                    return JsonResponse(serializer.data, status=201)
-
-            # If no specific fields are found, assume JSON data
-            elif isinstance(request.data, dict):
-                serializer = BookingSerializer(data=request.data)
-                if serializer.is_valid():
-                    booking = serializer.save()
-                    # print("Booking created:", booking)
-                    return JsonResponse(serializer.data, status=201)
-
-            # Return validation errors or indicate invalid request
-            # print("Validation errors:", serializer.errors if 'is_valid' in locals() and not serializer.is_valid() else "No valid data found")
-            return Response({"error": "Invalid or missing fields"}, status=400)
-
+            serializer = BookingSerializer(data=request.data)
+            if serializer.is_valid():
+                booking = serializer.save()
+                print('payload', booking)
+                return Response({'response': 'Booking created successfully'}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'response': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            # print("Unexpected error:", str(e))
-            import traceback
-            traceback.print_exc()
-            return JsonResponse({'error': str(e)}, status=500)
+            return Response({'response': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
 
 
 class MenuView(generics.ListCreateAPIView, TemplateView):
@@ -217,14 +240,14 @@ class MenuView(generics.ListCreateAPIView, TemplateView):
 
     def get(self, request, *args, **kwargs):
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            # Handle AJAX request
+           
             queryset = Menu.objects.all()
             serializer = MenuSerializer(queryset, many=True)
             return JsonResponse(serializer.data, safe=False)
         else:
-            # Handle normal template request
+           
             context = {
-                'menu_items': Menu.objects.all()  # Match template variable name
+                'menu_items': Menu.objects.all() 
             }
             return render(request, self.template_name, context)
 
@@ -251,10 +274,6 @@ class SingleMenuItemView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
     serializer_class = MenuSerializer
-
-
-
-
 
 #testing
 # testing csrf token
