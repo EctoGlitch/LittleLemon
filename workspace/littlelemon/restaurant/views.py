@@ -152,7 +152,7 @@ def logoutView(request):
             print(f"Error during token-based logout: {e}")
             return Response({"error": str(e)}, status=500)
 
-class APIBookview(generics.ListCreateAPIView):
+class APIBookview(generics.GenericAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
     
@@ -191,6 +191,64 @@ class APIBookview(generics.ListCreateAPIView):
         else:
             return JsonResponse({'response': serializer.errors})
         
+    def patch(self, request, *args, **kwargs):
+        try:
+            if 'id' not in request.data:
+                return Response({'response': 'Booking id is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            name = request.data.get('name')
+            no_of_guests = request.data.get('no_of_guests')
+            time_slot = request.data.get('time_slot')
+            booking_date = request.data.get('booking_date')
+            
+            booking = Booking.objects.get(id=request.data['id'])
+            booking.name = name if name else booking.name
+            booking.no_of_guests = no_of_guests if no_of_guests else booking.no_of_guests
+            booking.time_slot = time_slot if time_slot else booking.time_slot
+            booking.booking_date = booking_date if booking_date else booking.booking_date
+            
+            booking.save()
+            
+            return Response({'response': 'Booking updated successfully'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'response': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def put(self, request, *args, **kwargs):
+        try:
+            if 'id' not in request.data:
+                return Response({'response': 'Booking id is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            print(f'Received request data: {request.data}')
+            
+            serializer = BookingSerializer(data=request.data, partial=True)
+            if not serializer.is_valid():
+                return Response({'response': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            
+            booking = Booking.objects.get(id=request.data['id'])
+            
+            booking.name = request.data['name']
+            booking.no_of_guests = request.data['no_of_guests']
+            booking.time_slot = request.data['time_slot']
+            booking.booking_date = request.data['booking_date']
+            
+            booking.save()
+            
+            print()
+            print(f'Booking object: {booking}')
+            
+            return Response({'response': 'Booking updated successfully'}, status=status.HTTP_200_OK)
+        
+        except Booking.DoesNotExist:
+            return Response({'response': 'Booking not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        except ValueError as ve:
+            return Response({'response': f'Invalid booking id: {ve}'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as e:
+            return Response({'response': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    
     def delete(self, request, *args, **kwargs):
         try:
             if 'id' not in request.data:

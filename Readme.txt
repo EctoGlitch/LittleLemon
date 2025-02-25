@@ -114,6 +114,32 @@ application/json
   "email": "john@email.com",
 }
 
+METHOD: PUT
+http://127.0.0.1:8000/api/book-api/
+updates all fields of the booking with corresponding id
+
+application/json
+
+{
+  "id": 1,
+  "name": "John",
+  "no_of_guests": 2,
+  "booking_date": "2025-02-18",
+  "time_slot": "15", // 3pm
+}  
+
+METHOD: PATCH
+http://127.0.0.1:8000/api/book-api/
+updates only the fields provided in the request body
+
+application/json
+{
+    "id": 1,
+    "name": "John",
+}
+
+
+
 METHOD: DELETE
 http://127.0.0.1:8000/api/book-api/
 deletes booking with corresponding id
