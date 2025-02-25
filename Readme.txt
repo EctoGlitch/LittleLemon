@@ -94,6 +94,8 @@ application/json
 
 
 /*************************************************************************************************/
+BOOK
+
 INSOMNIA
 METHOD: GET
 http://127.0.0.1:8000/api/book-api/
@@ -160,6 +162,8 @@ click submit
 
 
 /*************************************************************************************************/
+MENU
+
 INSOMNIA
 METHOD: GET
 http://127.0.0.1:8000/api/menu-api/
@@ -169,6 +173,22 @@ for a specific date the endpoint will return all menu items for that date
 filter by category
 http://127.0.0.1:8000/restaurant/menu-api/?alcoholic=true
 returns all alcoholic menu items
+
+METHOD: POST
+http://127.0.0.1:8000/api/menu-api/
+application/json
+
+adds a new menu item to the database
+
+{
+    "title": "Pizza",
+    "slug": "pizza"
+    "price": 10.00,
+    "inventory": 7,
+    category_fk: 1,
+}
+
+
 
 BROWSER
 METHOD: GET

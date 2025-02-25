@@ -340,6 +340,41 @@ class APIMenuView(generics.ListCreateAPIView):
         serializer = MenuSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def post(self, request, *args, **kwargs):
+        try:
+            menu_item = {
+                'title': request.data.get('title'),
+                'slug': request.data.get('slug'),
+                'price': request.data.get('price'),
+                'inventory': request.data.get('inventory'),
+                'category_fk': request.data.get('category_fk'),
+            } 
+        
+            missing_fields = [field for field, value in menu_item.items() if not value]
+            
+            if missing_fields:
+                print ('Missing required fields:', missing_fields)
+                return Response({
+                    'response': f'Missing required fields: {", ".join(missing_fields)}'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            elif not missing_fields:
+                serializer = MenuSerializer(data=menu_item)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({'response': 'Menu item created successfully'}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'response': 'Invalid data provided'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        except ValueError as ve:
+            return Response({'response': str(ve)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as e:
+            return Response({'response': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+
+
 class BMenuView(generics.ListAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
