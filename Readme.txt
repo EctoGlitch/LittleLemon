@@ -113,7 +113,7 @@ application/json
   "date": "2025-02-18",
   "time": "12:00:00",
   "name": "John",
-  "email": "john@email.com",
+  "email": "john@email.com"
 }
 
 METHOD: PUT
@@ -127,7 +127,7 @@ application/json
   "name": "John",
   "no_of_guests": 2,
   "booking_date": "2025-02-18",
-  "time_slot": "15", // 3pm
+  "time_slot": "15" // 3pm
 }  
 
 METHOD: PATCH
@@ -137,7 +137,7 @@ updates only the fields provided in the request body
 application/json
 {
     "id": 1,
-    "name": "John",
+    "name": "John"
 }
 
 
@@ -185,7 +185,7 @@ adds a new menu item to the database
     "slug": "pizza"
     "price": 10.00,
     "inventory": 7,
-    category_fk: 1,
+    category_fk: 1
 }
 
 
@@ -195,3 +195,37 @@ METHOD: GET
 http://127.0.0.1:8000/menu/
 The browser will automatically send the CSRF token in the headers tab
 click on the menu-sub navigation buttons to filter the menu items
+
+
+Method PUT
+http://127.0.0.1:8000/restaurant/menu-api/
+updates all fields of the menu item with corresponding slug
+
+application/json
+
+{
+  "slug":"test",
+  "title": Test,
+  "inventory": 15,
+  "category_fk": "3",
+  "price": "9.99"
+} 
+
+METHOD: PATCH
+http://127.0.0.1:8000/restaurant/menu-api/
+updates only the fields provided in the request body
+
+application/json
+{
+    "slug": test,
+    "price": "9.99"
+}
+
+METHOD: DELETE
+http://127.0.0.1:8000/restaurant/menu-api/
+deletes booking with corresponding id
+
+application/json
+{
+  "slug": "test"
+}

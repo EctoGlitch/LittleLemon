@@ -2,7 +2,7 @@
 
 from django.db import models
 from rest_framework import serializers
-from .models import Menu, Booking
+from .models import Menu, Booking, Category
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
@@ -26,11 +26,19 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'email', 'password']
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name']
+
 
 class MenuSerializer(serializers.ModelSerializer):
+    category_fk = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+    
     class Meta:
         model = Menu
-        fields = ['title', 'slug', 'price', 'inventory', 'category_fk']
+        fields = ['id', 'title', 'slug', 'price', 'inventory', 'category_fk']
+    
         
 class BookingSerializer(serializers.ModelSerializer):
     class Meta:

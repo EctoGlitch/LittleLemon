@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from rest_framework import generics, status, viewsets
 from django.views import generic
@@ -246,9 +246,7 @@ class APIBookview(generics.GenericAPIView):
         
         except Exception as e:
             return Response({'response': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    
-    
-    
+      
     def delete(self, request, *args, **kwargs):
         try:
             if 'id' not in request.data:
@@ -372,7 +370,119 @@ class APIMenuView(generics.ListCreateAPIView):
         except Exception as e:
             return Response({'response': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
+    def put(self, request, *args, **kwargs):
+        try:
+            slug = request.data.get('slug')
+
+            if 'slug' not in request.data:
+                return Response({'response': 'Slug is required for updating a menu item'}, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                menu_item = Menu.objects.get(slug=slug)
+                # print()
+                # print('MENU ITEM', menu_item)
+            except Menu.DoesNotExist:
+                return Response({'response': 'Menu item not found'}, status=status.HTTP_404_NOT_FOUND)
+
+            print ('REQUEST DATA', request.data)
+            
+            required_fields = ['title', 'price', 'inventory', 'category_fk']
+            missing_fields = [field for field in required_fields if field not in request.data]
+
+            if missing_fields:
+                return Response({'Error': f'{" field, ".join(missing_fields)} field is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            data = {
+                'title' : request.data.get('title'),
+                'slug' : request.data.get('slug'),
+                'price' : abs(float(request.data.get('price'))),
+                'inventory' : abs(int(request.data.get('inventory'))),
+                'category_fk' : abs(int(request.data.get('category_fk'))),
+            }       
+            
+            serializer = self.serializer_class(menu_item, data=data, partial=True)
+
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            serializer.save()
+
+            return Response({'response': 'Menu item updated successfully'}, status=status.HTTP_200_OK)
+
+        except ValueError as ve:
+            print(f"ValueError: {ve}")
+            return Response({
+                'response': 'Invalid data provided for updating the menu item.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return Response({
+                'response': 'An unexpected error occurred while updating the menu item. Please try again later.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def patch(self, request, *args, **kwargs):
         
+        try:
+            slug = request.data.get('slug')
+            if 'slug' not in request.data:
+                return Response({'response': 'Slug is required for updating a menu item'}, status=status.HTTP_400_BAD_REQUEST)
+
+            menu_item = Menu.objects.get(slug=slug)
+
+            data = {
+                'title': request.data.get('title', menu_item.title),
+                'price': abs(float(request.data.get('price', menu_item.price))),
+                'inventory': abs(int(request.data.get('inventory', menu_item.inventory))),
+                'category_fk': request.data.get('category_fk', menu_item.category_fk_id)
+            }
+
+            
+
+            serializer = self.serializer_class(menu_item, data=data, partial=True)
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'response': 'Menu item updated successfully'}, status=status.HTTP_200_OK)
+            else:
+                print('SERIALIZER ERRORS', serializer.errors)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except ValueError as ve:
+            print(f"ValueError: {ve}")
+            return Response({'response': f'Invalid data provided for updating the menu item. Error: {ve}'}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Menu.DoesNotExist:
+            return Response({'response': 'Menu item not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return Response({'response': 'An unexpected error occurred while updating the menu item. Please try again later.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    def delete(self, request, *args, **kwargs):
+        try:
+            if 'slug' not in request.data:
+                return Response({'response': 'Slug is required for updating a menu item'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            menu = get_object_or_404(Menu, slug=request.data['slug'])
+            menu.delete()
+            return Response({'response':'Menu item was deleted successfully.'})
+            
+        
+        except Menu.DoesNotExist:
+            return Response({'response':'No item with the provided slug exists.'})
+        
+        except ValueError as ve:
+            print(f"ValueError: {ve}")
+            return Response({
+                'response': 'Invalid data provided for updating the menu item.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return Response({
+                'response': 'An unexpected error occurred while updating the menu item. Please try again later.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
 
 
 class BMenuView(generics.ListAPIView):
